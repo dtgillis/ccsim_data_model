@@ -1,0 +1,26 @@
+Requirements
+
+
+python2 
+
+python dependencies
+
+django
+numpy
+scipy
+
+javascript packages
+
+d3
+jquery
+bootstrap
+
+css
+
+bootstrap.css
+
+
+These are the minimum requirements to host this instance of django.
+
+
+

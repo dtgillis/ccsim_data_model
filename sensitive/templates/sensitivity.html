@@ -1,0 +1,163 @@
+<html>
+<head>
+  {% load staticfiles %}
+<script src=" {%static "d3/d3.js" %}"></script>
+<script src=" {%static "jquery/jquery-2.1.1.min.js" %}" ></script>
+<script src="{% static "bootstrap/js/bootstrap.js" %}"></script>
+<script src="{% static "js/senstivePlots.js" %}"></script>
+<link rel="stylesheet"  href="{% static "bootstrap/css/bootstrap-theme.css" %}" >
+<link rel="stylesheet"  hret="{% static "bootstrap/css/bootstrap.css" %}" >
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+<body>
+
+<style>
+
+.container-fluid{
+    width:50%;
+    margin-left:auto;
+    margin-right:auto;
+}
+body {
+  font: 10px sans-serif;
+}
+.graphline path{
+
+}
+.powergraphs{
+    width:300px;
+    height:300px;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis .runnumber {
+    display:none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.graphline {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+.graphs{
+    width:300px;
+    height:300px;
+
+}
+</style>
+
+<div class="container-fluid"> <!-- main container -->
+
+<div class="row">
+    <div class="view">
+        <div class="jumbotron">
+            <h1>Mouse</h1>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="view">
+        <div class="row">
+            <div id="consoles" class="span12"> <!-- start button console -->
+
+                <select id="snp_config">
+                    {% for snpConfig in snpConChoice %}
+                        <option value="{{ snpConfig}}">{{snpConfig}}</option>
+
+                    {% endfor %}
+                </select>
+
+                <select id="varQtl">
+                    {% for vqtl in varQtl %}
+                        <option value="{{vqtl}}" > {{vqtl}}</option>
+                    {% endfor %}
+                </select>
+
+                <select id="software">
+                    {% for software in softwares %}
+                        <option value="{{software}}" > {{software}}</option>
+                    {% endfor %}
+                </select>
+                <button id="raw_plot_submit_btn"  >Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    <div class="view">
+        <div class="row">
+            <div id="rawScores"   clas="span12">
+                <div class="row clearfix">
+                    <svg id="rawgraph1" class="graphs"></svg>
+                    <svg id="rawgraph5" class="graphs"></svg>
+                </div>
+                <div class="row clearfix">
+                    <svg id="rawgraph10" class="graphs"></svg>
+                    <svg id="rawgraphinf" class="graphs"></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="container-fluid">
+    <div class="view">
+    <select id="power_curve_snp_config">
+        {% for snpConfig in snpConChoice %}
+            <option value="{{ snpConfig}}">{{snpConfig}}</option>
+
+        {% endfor %}
+    </select>
+    <button id="power_curve_button">Submit</button>
+    </div>
+</div>
+<div class="container">
+    <div class="view">
+        <div class="row">
+            <div id="powerGraphs">
+                <div class = "raw clearfix">
+                    <svg id="powergraphplink" class="powergraphs"></svg>
+                    <svg id="powergraphbagpipe" class="powergraphs"></svg>
+                </div>
+                <div class="raw clearfix">
+                    <svg id="powergraphhtree" class="powergraphs"></svg>
+                    <svg id="powergraphemmax" class="powergraphs"></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--
+<div id="softwareCompare"></div>
+
+<div id="rawPower"></div>
+-->
+<script>
+
+$("#raw_plot_submit_btn").on("click",getRawPlots);
+$("#power_curve_button").on("click",get_power_curve);
+
+getRawPlots();
+get_power_curve();
+
+
+</script>
+</div>
+</div>
+</body>
+</html>

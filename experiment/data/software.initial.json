@@ -1,0 +1,1 @@
+[{"pk": 1, "model": "experiment.software", "fields": {"name": "bagpipe"}}, {"pk": 2, "model": "experiment.software", "fields": {"name": "plink"}}, {"pk": 3, "model": "experiment.software", "fields": {"name": "htree"}}, {"pk": 4, "model": "experiment.software", "fields": {"name": "emmax"}}]
