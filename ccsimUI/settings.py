@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'experiment',
     'experiment_data',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -60,7 +61,7 @@ TEMPLATE_DIRS=('/home/dtgillis/workspace/ccsimUI/home/templates',)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'ccsim.sqlite3'),
     }
 }
 

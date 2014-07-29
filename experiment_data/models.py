@@ -1,8 +1,7 @@
 from django.db import models
 
 # Create your models here.
-
-from experiment import models as m
+import experiment.models as exp
 
 
 class AdditiveModelManager(models.Manager):
@@ -23,8 +22,8 @@ class AdditiveModelManager(models.Manager):
 
 class AdditiveModel(models.Model):
 
-    parameter = models.ForeignKey(m.Parameters)
-    software = models.ForeignKey(m.Software)
+    parameter = models.ForeignKey(exp.AdditiveParameter)
+    software = models.ForeignKey(exp.Software)
     run_number = models.IntegerField()
     locus_span = models.IntegerField()
     locus_pvalue = models.FloatField()
@@ -55,11 +54,10 @@ class EpistaticModelManager(models.Manager):
         return epistatic_model
 
 
-
 class EpistaticModel(models.Model):
 
-    parameter = models.ForeignKey(m.Parameters)
-    software = models.ForeignKey(m.Software)
+    parameter = models.ForeignKey(exp.EpistaticParameter)
+    software = models.ForeignKey(exp.Software)
     run_number = models.IntegerField()
     locus_span = models.IntegerField()
     locus_pvalue = models.FloatField()

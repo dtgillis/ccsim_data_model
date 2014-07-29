@@ -3,39 +3,30 @@ Created on May 30, 2014
 
 @author: dtgillis
 """
-import os; os.environ['DJANGO_SETTINGS_MODULE'] = 'ccsimUI.settings'; import django
+import os
+os.environ['DJANGO_SETTINGS_MODULE'] = 'ccsimUI.settings'
 from experiment_data.data import ExperimentDataImporter
-from experiment.models import Parameters
-from experiment.models import Software
-from django.db.models import Q
+import experiment.models as exp
 
 
-def parse_data(additive=True):
+def parse_additive_data():
 
-    for software in Software.objects.all():
-
-        if additive is True:
-            params = Parameters.objects.exclude(snp_config='1_1')
-        else:
-            params = Parameters.objects.filter(Q(mouse_per_strain='inf') | Q(mouse_per_strain='1'),
-                                               snp_config='1_1')
-
+    for software in exp.Software.objects.all():
+        params = exp.AdditiveParameter.objects.all()
         for param in params:
-
-            if software.name == 'htree' and (param.mouse_per_strain == '5' or param.mouse_per_strain == '10'):
+            if software.name in ['htree', 'bagpipe'] \
+                    and (param.mouse_per_strain == '5' or param.mouse_per_strain == '10'):
+                continue
+            elif param.var_qtl in [.20, .15] and param.mouse_per_strain != 'inf':
                 continue
             else:
                 exp_data = ExperimentDataImporter(
                     params=param, software=software,
                     base_dir='/home/dtgillis/ccsim_workspace/data_django', sweep_size=50000000)
 
-                if additive:
-                    exp_data.parse_additive_data()
-                else:
-                    exp_data.parse_epis_results()
-
+                exp_data.parse_additive_data()
 
 if __name__ == '__main__':
-    # parse_data(additive=True)
-    parse_data(additive=False)
+    parse_additive_data()
+    #parse_data(additive=False)
     #parse_epis_data()
