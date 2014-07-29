@@ -3,15 +3,23 @@ Created on May 30, 2014
 
 @author: Daniel Gillis
 """
-import os; os.environ['DJANGO_SETTINGS_MODULE'] = 'ccsimUI.settings'; import django
-from experiment.models import Parameters
-from experiment.models import Software
-from experiment.models import GevModelParams
+import os
+os.environ['DJANGO_SETTINGS_MODULE'] = 'ccsimUI.settings'
+import experiment.models as exp
 from scipy.stats import genextreme
 import numpy as np
 
 
-def create_gev_models_scipy():
+def create_software():
+    """
+    Creates the software records
+    """
+
+    for software in ['bagpipe', 'plink', 'emmax', 'htree']:
+        exp.Software.objects.create_software(name=software).save()
+
+
+def create_gev_models():
     """
     parses the top values and creates
     extreme value dist and saves the
@@ -23,49 +31,65 @@ def create_gev_models_scipy():
                 '1': 'CC_0_0_0_150.1/',
                 '5': 'CC_0_0_0_150.5/',
                 '10': 'CC_0_0_0_150.10/'}
-
+    gev_model_list = []
     for mouse_per in ['inf', '1', '5', '10']:
 
-        for software in Software.objects.all():
+        for software in exp.Software.objects.all():
 
             if software.name == 'htree' and (mouse_per == '5' or mouse_per == '10'):
                 continue
             else:
 
                 data_file = base_dir + dir_dict[mouse_per] + software.name + '.evd'
-
                 np_extreme_values = np.genfromtxt(data_file)
-
                 if software.name in ['plink', 'emmax']:
                     np_extreme_values = -np.log(np_extreme_values)
-
                 shape, location, scale = genextreme.fit(np_extreme_values, -1, loc=np_extreme_values.mean())
-
-                tmp_gev_model = GevModelParams.objects.create_gev_model(
+                gev_model_list.append(exp.GevModelParams(
                     software=software, mouse_per_strain=mouse_per,
-                    location=location, scale=scale, shape=shape)
-                tmp_gev_model.save()
+                    location=location, scale=scale, shape=shape))
+
+    exp.GevModelParams.objects.bulk_create(gev_model_list)
 
     return 0
 
 
-def create_parameters():
+def create_epistatic_parameters():
     """
-    creates initial parameter records in the database
+    creates initial epistatic parameter records in the database
+    """
+    var_env = .25
+    parameters_list = []
+    for var_qtl in [.05, .1, .15, .20, .25]:
+        for snp_config in ['1_1']:
+            for mouse_per in ['inf', '1', '5', '10']:
+                for multiplier in [.5, 2.0]:
+                    var_gen = 1.0 - var_qtl - var_env
+                    parameters_list.append(exp.EpistaticParameters(
+                        snp_config=snp_config, var_qtl=var_qtl, mouse_per_strain=mouse_per,
+                        var_env=var_env, var_gen=var_gen, strains=150, multiplier=multiplier))
+    exp.EpistaticParameters.objects.bulk_create(parameters_list)
+
+
+def create_additive_parameters():
+    """
+    creates initial additive parameter records in the database
 
     """
     var_env = .25
-    for var_qtl in [.05, .1, .25]:
-        for snp_config in ['1_0', '1_1', '2_0', '3_0']:
+    parameters_list = []
+    for var_qtl in [.05, .1, .15, .20, .25]:
+        for snp_config in ['1_0', '2_0', '3_0']:
             for mouse_per in ['inf', '1', '5', '10']:
                 var_gen = 1.0 - var_qtl - var_env
-                tmp_param = Parameters.objects.create_param(
-                    snp_config=snp_config, varQtl=var_qtl, mousePerStrain=mouse_per,
-                    varEnv=var_env, varGen=var_gen, strains=150)
-                tmp_param.save()
+                parameters_list.append(exp.AdditiveParameters(
+                    snp_config=snp_config, var_qtl=var_qtl, mouse_per_strain=mouse_per,
+                    var_env=var_env, var_gen=var_gen, strains=150))
+    exp.AdditiveParameters.objects.bulk_create(parameters_list)
 
-                    
 
 if __name__ == '__main__':
-    create_parameters()
-    create_gev_models_scipy()
+    create_software()
+    create_additive_parameters()
+    create_epistatic_parameters()
+    create_gev_models()
