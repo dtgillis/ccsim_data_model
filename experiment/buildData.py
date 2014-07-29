@@ -45,11 +45,11 @@ def create_gev_models():
                 if software.name in ['plink', 'emmax']:
                     np_extreme_values = -np.log(np_extreme_values)
                 shape, location, scale = genextreme.fit(np_extreme_values, -1, loc=np_extreme_values.mean())
-                gev_model_list.append(exp.GevModelParams(
+                gev_model_list.append(exp.GevModelParam(
                     software=software, mouse_per_strain=mouse_per,
                     location=location, scale=scale, shape=shape))
 
-    exp.GevModelParams.objects.bulk_create(gev_model_list)
+    exp.GevModelParam.objects.bulk_create(gev_model_list)
 
     return 0
 
@@ -65,10 +65,10 @@ def create_epistatic_parameters():
             for mouse_per in ['inf', '1', '5', '10']:
                 for multiplier in [.5, 2.0]:
                     var_gen = 1.0 - var_qtl - var_env
-                    parameters_list.append(exp.EpistaticParameters(
+                    parameters_list.append(exp.EpistaticParameter(
                         snp_config=snp_config, var_qtl=var_qtl, mouse_per_strain=mouse_per,
                         var_env=var_env, var_gen=var_gen, strains=150, multiplier=multiplier))
-    exp.EpistaticParameters.objects.bulk_create(parameters_list)
+    exp.EpistaticParameter.objects.bulk_create(parameters_list)
 
 
 def create_additive_parameters():
@@ -82,10 +82,10 @@ def create_additive_parameters():
         for snp_config in ['1_0', '2_0', '3_0']:
             for mouse_per in ['inf', '1', '5', '10']:
                 var_gen = 1.0 - var_qtl - var_env
-                parameters_list.append(exp.AdditiveParameters(
+                parameters_list.append(exp.AdditiveParameter(
                     snp_config=snp_config, var_qtl=var_qtl, mouse_per_strain=mouse_per,
                     var_env=var_env, var_gen=var_gen, strains=150))
-    exp.AdditiveParameters.objects.bulk_create(parameters_list)
+    exp.AdditiveParameter.objects.bulk_create(parameters_list)
 
 
 if __name__ == '__main__':

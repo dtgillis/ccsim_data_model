@@ -9,7 +9,7 @@ from django.db import models
 #Experiment Models
 
 
-class Parameters(models.Model):
+class Parameter(models.Model):
 
     snp_config = models.CharField(max_length=3)
     var_qtl = models.FloatField()
@@ -22,7 +22,7 @@ class Parameters(models.Model):
         abstract = True
 
 
-class EpistaticParametersManager(models.Manager):
+class EpistaticParameterManager(models.Manager):
     """
     custom manager to make parameter objects
     """
@@ -35,12 +35,12 @@ class EpistaticParametersManager(models.Manager):
         return param
 
 
-class EpistaticParameters(Parameters):
+class EpistaticParameter(Parameter):
     """ Class represents the parameters used for the
     epistatic model
     """
     multiplier = models.FloatField()
-    objects = EpistaticParametersManager()
+    objects = EpistaticParameterManager()
 
     class Meta:
         unique_together = ('snp_config', 'var_qtl', 'var_env', 'var_gen', 'strains', 'mouse_per_strain', 'multiplier')
@@ -68,7 +68,7 @@ class EpistaticParameters(Parameters):
             return name
 
 
-class AdditiveParametersManager(models.Manager):
+class AdditiveParameterManager(models.Manager):
     """
     custom manager to make additive parameter objects
     """
@@ -80,12 +80,12 @@ class AdditiveParametersManager(models.Manager):
         return param
 
 
-class AdditiveParameters(Parameters):
+class AdditiveParameter(Parameter):
     """ Class represents the parameters used for the
     additive model
     """
 
-    objects = AdditiveParametersManager()
+    objects = AdditiveParameterManager()
 
     class Meta:
         unique_together = ('snp_config', 'var_qtl', 'var_env', 'var_gen', 'strains', 'mouse_per_strain')
@@ -127,7 +127,7 @@ class Software(models.Model):
         return self.name
 
 
-class GevModelParamsManager(models.Manager):
+class GevModelParamManager(models.Manager):
     """
     custom manager to make gevmodelparams
     """
@@ -139,14 +139,14 @@ class GevModelParamsManager(models.Manager):
         return gev_model
 
 
-class GevModelParams(models.Model):
+class GevModelParam(models.Model):
 
     software = models.ForeignKey(Software)
     mouse_per_strain = models.CharField(max_length=3)
     location = models.FloatField()
     scale = models.FloatField()
     shape = models.FloatField()
-    objects = GevModelParamsManager()
+    objects = GevModelParamManager()
 
     class Meta:
         unique_together = ('mouse_per_strain', 'software')
