@@ -7,7 +7,7 @@ import numpy as np
 
 
 return_dict = dict()
-bins = 9
+bins = 11
 allele_range = []
 for param_id in exp_data.AdditiveModelAlleleFrequency.objects.values_list('parameter', flat=True).distinct():
     param = exp.AdditiveParameter.objects.filter(pk=param_id).get()
@@ -17,7 +17,7 @@ for param_id in exp_data.AdditiveModelAlleleFrequency.objects.values_list('param
         if software.name not in return_dict[param.var_qtl]:
             return_dict[param.var_qtl][software.name] = []
         lower_range = 0.0
-        for upper_range in np.linspace(0, 1, num=bins):
+        for upper_range in np.linspace(0, .5, num=bins):
             if upper_range == lower_range:
                 continue
             run_numbers = exp_data.AdditiveModelAlleleFrequency.objects.filter(
@@ -43,7 +43,7 @@ for param_id in exp_data.AdditiveModelAlleleFrequency.objects.values_list('param
 lower_range = 0.0
 columns = []
 allele_freq_file = open('/home/dtgillis/ccsim_workspace/data_pic/allele_freq.csv', 'w')
-for upper_range in np.linspace(0, 1, num=bins):
+for upper_range in np.linspace(0, .5, num=bins):
     if upper_range == lower_range:
         continue
     columns.append("{0:.1f}%-{1:.1f}%".format(lower_range*100, upper_range*100))
