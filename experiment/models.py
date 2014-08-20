@@ -50,7 +50,7 @@ class EpistaticParameter(Parameter):
         if self.multiplier == 2.0:
             multiplier_string = ""
         else:
-            multiplier_string = "_{0:f}".format(self.multiplier)
+            multiplier_string = "_.5"
 
         if self.mouse_per_strain != 'inf':
 
@@ -108,6 +108,64 @@ class AdditiveParameter(Parameter):
             return name
 
 
+class AdditiveStrainSweepParameter(Parameter):
+
+        class Meta:
+            unique_together = ('snp_config', 'var_qtl', 'var_env', 'var_gen', 'strains', 'mouse_per_strain')
+
+        def __unicode__(self):
+
+            if self.mouse_per_strain != 'inf':
+
+                name = 'CC_' + self.snp_config + \
+                       '_' + str(int(self.var_qtl * 100)) + \
+                       '_' + str(self.strains) + '.' + self.mouse_per_strain
+
+                return name
+
+            else:
+                name = 'CC_' + self.snp_config + \
+                       '_' + str(int(self.var_qtl*100)) +\
+                       '_' + str(self.strains)
+
+                return name
+
+
+class AdditiveEnvironmentSweepParameter(Parameter):
+
+        class Meta:
+            unique_together = ('snp_config', 'var_qtl', 'var_env', 'var_gen', 'strains', 'mouse_per_strain')
+
+        def __unicode__(self):
+
+            if self.mouse_per_strain != 'inf':
+
+                if self.var_env != .25:
+                    name = 'CC_' + self.snp_config + \
+                           '_' + str(int(self.var_qtl * 100)) + \
+                           '_' + str(int(self.var_env * 100)) + \
+                           '_' + str(self.strains) + '.' + self.mouse_per_strain
+                else:
+                    name = 'CC_' + self.snp_config + \
+                           '_' + str(int(self.var_qtl * 100)) + \
+                           '_' + str(self.strains) + '.' + self.mouse_per_strain
+
+                return name
+
+            else:
+                if self.var_env != .25:
+                    name = 'CC_' + self.snp_config + \
+                           '_' + str(int(self.var_qtl*100)) +\
+                           '_' + str(int(self.var_env * 100)) + \
+                           '_' + str(self.strains)
+                else:
+                    name = 'CC_' + self.snp_config + \
+                           '_' + str(int(self.var_qtl*100)) +\
+                           '_' + str(self.strains)
+
+                return name
+
+
 class SoftwareManager(models.Manager):
     """
     custom manager to make software objects
@@ -146,10 +204,12 @@ class GevModelParam(models.Model):
     location = models.FloatField()
     scale = models.FloatField()
     shape = models.FloatField()
+    strains = models.IntegerField()
+    var_env = models.FloatField()
     objects = GevModelParamManager()
 
     class Meta:
-        unique_together = ('mouse_per_strain', 'software')
+        unique_together = ('mouse_per_strain', 'software', 'strains', 'var_env')
 
     def __unicode__(self):
-        return 'gev model ' + self.software.name + ' mice per ' + str(self.mouse_per_strain)
+        return 'gev model ' + self.software.name + ' mice per ' + str(self.mouse_per_strain) + ' strains ' + str(self.strains)
