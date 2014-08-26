@@ -2,7 +2,6 @@ import os
 os.environ['DJANGO_SETTINGS_MODULE'] = 'ccsimUI.settings'
 import experiment.models as exp
 import experiment_data.models as exp_data
-import matplotlib.pyplot as plt
 import numpy as np
 
 
